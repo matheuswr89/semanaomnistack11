@@ -14,7 +14,7 @@ module.exports = {
                 'ongs.nome',
                 'ongs.email',
                 'ongs.whatsapp',
-                'ongs.nome',
+                'ongs.cidade',
                 'ongs.uf',
             ]);
 
