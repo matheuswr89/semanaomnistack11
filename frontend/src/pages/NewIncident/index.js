@@ -16,7 +16,6 @@ export default function NewIncident() {
     const ongId = localStorage.getItem('ongId');
 
     const history = useHistory();
-
     async function handlerNewIncident(e) {
         e.preventDefault()
 
@@ -62,6 +61,7 @@ export default function NewIncident() {
                         value={valor}
                         onChange={e => setValor(e.target.value)} />
                     <div className="btn-group">
+                        <button className="button-cancelar" type="reset()">Cancelar</button>
                         <button className="button" type="submit">Cadastrar</button>
                     </div>
 
