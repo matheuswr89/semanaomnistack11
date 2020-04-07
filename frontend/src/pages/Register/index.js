@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { Link, useHistory} from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import { FiArrowLeft } from 'react-icons/fi';
+import { useToasts } from 'react-toast-notifications'
 
 import api from '../../services/api';
 
@@ -14,6 +15,7 @@ export default function Register() {
     const [whatsapp, setWhatsapp] = useState('');
     const [cidade, setCidade] = useState('');
     const [uf, setUf] = useState('');
+    const { addToast } = useToasts();
 
     const history = useHistory();
 
@@ -25,11 +27,26 @@ export default function Register() {
 
         try {
             const response = await api.post('/ongs', data);
-            alert(`Seu ID de acesso: ${response.data.id}`);
+            addToast(`ONG cadastrada com sucesso. ID de acesso: ${response.data.id}`, {
+                appearance: 'success',
+                autoDismiss: true,
+            });
             history.push('/');
         } catch (err) {
-            alert('Erro no cadastro, tente novamente!');
+            addToast(`Não foi possível cadastrar a ONG. Tente novamente`, {
+                appearance: 'error',
+                autoDismiss: true,
+            });
         }
+    }
+
+    function cancel(e) {
+        e.preventDefault();
+        setCidade('');
+        setEmail('');
+        setNome('');
+        setUf('');
+        setWhatsapp('');
     }
 
     return (
@@ -37,7 +54,7 @@ export default function Register() {
             <div className="content">
                 <section>
                     <img src={logo} alt="Be The Hero" />
-                    <h1>Cadastro</h1>
+                    <h1 style={{ color: '#41414d' }}>Cadastro</h1>
                     <p>Faça o seu cadastro, entre na plataforma e ajude pessoas a encontrarem os casos da sua ONG.</p>
 
                     <Link className="back-link" to="/">
@@ -45,7 +62,7 @@ export default function Register() {
                         Não tenho cadastro
                     </Link>
                 </section>
-                <form onSubmit={handlerRegister}>
+                <form onSubmit={handlerRegister} onReset={cancel}>
                     <input placeholder="Nome da ONG"
                         value={nome}
                         onChange={e => setNome(e.target.value)}
@@ -69,9 +86,10 @@ export default function Register() {
                             onChange={e => setUf(e.target.value)}
                         />
                     </div>
-
-                    <button className="button" type="submit">Cadastrar</button>
-
+                    <div className="btn-group">
+                        <button className="button-cancelar" type="reset">Cancelar</button>
+                        <button className="button" type="submit">Cadastrar</button>
+                    </div>
                 </form>
             </div>
         </div>

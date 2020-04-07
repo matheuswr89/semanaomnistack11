@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useHistory } from 'react-router-dom';
-import { FiPower, FiTrash2 } from 'react-icons/fi';
+import { FiPower, FiTrash2, FiEdit } from 'react-icons/fi';
+import { useToasts } from 'react-toast-notifications'
+
 
 import api from '../../services/api';
 
@@ -10,6 +12,7 @@ import './styles.css';
 
 export default function Profile() {
     const [incidents, setIncidents] = useState([]);
+    const { addToast } = useToasts();
 
     const history = useHistory();
 
@@ -33,16 +36,30 @@ export default function Profile() {
                     Authorization: ongId,
                 }
             });
-
-            setIncidents(incidents.filter(incidents => incidents.id != id));
+            setIncidents(incidents.filter(incidents => incidents.id !== id));
+            addToast('Caso excluido com sucesso.', {
+                appearance: 'success',
+                autoDismiss: true,
+            });
         } catch (err) {
-            alert('Erro ao deletar o caso, tente novamente.')
+            addToast('Não foi possível excluir o caso. Tente novamente.', {
+                appearance: 'error',
+                autoDismiss: true,
+            });
+            
         }
     }
 
-    function handleLogout(){
-        localStorage.clear();
+    async function handleEditIncident(id){
+        history.push(`/edit/${id}`);
+    }
 
+    function handleLogout() {
+        localStorage.clear();
+        addToast('Deslogado com sucesso.', {
+            appearance: 'info',
+            autoDismiss: true,
+        });
         history.push('/');
     }
 
@@ -61,7 +78,7 @@ export default function Profile() {
             <h1>Casos cadastrados</h1>
 
             <ul>
-                {incidents.map(incidents => (
+                {incidents.length > 0 ? incidents.map(incidents => (
                     <li key={incidents.id}>
                         <strong>CASO:</strong>
                         <p>{incidents.title}</p>
@@ -75,8 +92,12 @@ export default function Profile() {
                         <button onClick={() => handleDeleteIncident(incidents.id)} type="button">
                             <FiTrash2 size={20} color="#a8a8b3" />
                         </button>
+                        <button className="edit" onClick={() => handleEditIncident(incidents.id)} type="button">
+                            <FiEdit size={20} color="#a8a8b3" />
+                        </button>
                     </li>
-                ))}
+                ))
+                    : <h4>Nenhum incidente cadastrado!</h4>}
             </ul>
         </div>
     );

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link, useHistory } from 'react-router-dom';
+import { Link, useHistory, useParams } from 'react-router-dom';
 import { FiArrowLeft } from 'react-icons/fi';
 import { useToasts } from 'react-toast-notifications'
 
@@ -9,17 +9,27 @@ import './styles.css';
 
 import logo from '../../assets/logo.svg';
 
-export default function NewIncident() {
+export default function Edit() {
+    const ongId = localStorage.getItem('ongId');
+    const { id } = useParams();
     const [title, setTitle] = useState('');
     const [descricao, setDescricao] = useState('');
     const [valor, setValor] = useState('');
-    const { addToast } = useToasts();
-    
-
-    const ongId = localStorage.getItem('ongId');
-
     const history = useHistory();
-    async function handlerNewIncident(e) {
+    const { addToast } = useToasts();
+
+    async function popularCampos() {
+        const response = await api.get(`incidents/${id}`, {
+            headers: {
+                Authorization: ongId,
+            }
+        })
+        return response.data[0];
+    }
+    const caso = popularCampos();
+    console.log(caso);
+
+    async function handlerEditIncident(e) {
         e.preventDefault()
 
         const data = {
@@ -29,18 +39,18 @@ export default function NewIncident() {
         }
 
         try {
-            await api.post('incidents', data, {
+            await api.put(`incidents/${id}`, data, {
                 headers: {
                     Authorization: ongId,
                 }
             })
-            addToast('Caso criado com sucesso.', {
+            addToast(`Caso editado com sucesso.`, {
                 appearance: 'success',
                 autoDismiss: true,
             });
             history.push('/profile');
         } catch (err) {
-            addToast('Não foi possível cadastrar o caso. Tente novamente.', {
+            addToast(`Não foi possível editar o caso. Tente novamente.`, {
                 appearance: 'error',
                 autoDismiss: true,
             });
@@ -59,7 +69,7 @@ export default function NewIncident() {
             <div className="content">
                 <section>
                     <img src={logo} alt="Be The Hero" />
-                    <h1 style={{ color: '#41414d' }}>Cadastrar novo caso</h1>
+                    <h1 style={{ color: '#41414d' }}>Editar caso</h1>
                     <p>Descreva o caso detalhadamente para encontrar um heroi para resolver isso.</p>
 
                     <Link className="back-link" to="/profile">
@@ -67,7 +77,7 @@ export default function NewIncident() {
                         Voltar para Home
                     </Link>
                 </section>
-                <form onSubmit={handlerNewIncident} onReset={cancel} id="form">
+                <form onSubmit={handlerEditIncident} onReset={cancel} id="form">
                     <input placeholder="Titulo do caso"
                         value={title}
                         onChange={e => setTitle(e.target.value)} />
@@ -79,7 +89,7 @@ export default function NewIncident() {
                         onChange={e => setValor(e.target.value)} />
                     <div className="btn-group">
                         <button className="button-cancelar" type="reset">Cancelar</button>
-                        <button className="button" type="submit">Cadastrar</button>
+                        <button className="button" type="submit">Editar</button>
                     </div>
                 </form>
             </div>

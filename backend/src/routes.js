@@ -37,6 +37,10 @@ routes.get('/incidents',celebrate({
     })
 }), IncidentsController.index);
 
+routes.get('/incidents/:id', IncidentsController.pesquisa);
+
+routes.put('/incidents/:id',IncidentsController.update);
+
 routes.post('/incidents', celebrate({
     [Segments.BODY]: Joi.object().keys({
         title: Joi.string().required(),
