@@ -11,33 +11,27 @@ import logo from '../../assets/logo.svg';
 
 export default function Edit() {
     const ongId = localStorage.getItem('ongId');
+    
+    let query = window.location.search;
+    let params = new URLSearchParams(query);
+    const title2 = params.get('title');
+    const descricao2 = params.get('descricao');
+    const valor2 = params.get('valor');
+    
     const { id } = useParams();
-    const [title, setTitle] = useState('');
-    const [descricao, setDescricao] = useState('');
-    const [valor, setValor] = useState('');
+    const [title, setTitle] = useState(title2);
+    const [descricao, setDescricao] = useState(descricao2);
+    const [valor, setValor] = useState(valor2);
     const history = useHistory();
     const { addToast } = useToasts();
 
-    async function popularCampos() {
-        const response = await api.get(`incidents/${id}`, {
-            headers: {
-                Authorization: ongId,
-            }
-        })
-        return response.data[0];
-    }
-    const caso = popularCampos();
-    console.log(caso);
-
     async function handlerEditIncident(e) {
         e.preventDefault()
-
         const data = {
             title,
             descricao,
             valor,
         }
-
         try {
             await api.put(`incidents/${id}`, data, {
                 headers: {
@@ -80,15 +74,15 @@ export default function Edit() {
                 <form onSubmit={handlerEditIncident} onReset={cancel} id="form">
                     <input placeholder="Titulo do caso"
                         value={title}
-                        onChange={e => setTitle(e.target.value)} />
+                        onChange={e => setTitle(e.target.value)} required/>
                     <textarea placeholder="Descrição"
                         value={descricao}
-                        onChange={e => setDescricao(e.target.value)} />
+                        onChange={e => setDescricao(e.target.value)} required />
                     <input placeholder="Valor"
                         value={valor}
-                        onChange={e => setValor(e.target.value)} />
+                        onChange={e => setValor(e.target.value)} required />
                     <div className="btn-group">
-                        <button className="button-cancelar" type="reset">Cancelar</button>
+                        <button className="button-cancelar" type="reset">Limpar</button>
                         <button className="button" type="submit">Editar</button>
                     </div>
                 </form>

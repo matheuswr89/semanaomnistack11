@@ -50,8 +50,8 @@ export default function Profile() {
         }
     }
 
-    async function handleEditIncident(id){
-        history.push(`/edit/${id}`);
+    async function handleEditIncident(id, title,descricao,valor){
+        history.push(`/edit/${id}?title=${title}&valor=${valor}&descricao=${descricao}`);
     }
 
     function handleLogout() {
@@ -92,7 +92,7 @@ export default function Profile() {
                         <button onClick={() => handleDeleteIncident(incidents.id)} type="button">
                             <FiTrash2 size={20} color="#a8a8b3" />
                         </button>
-                        <button className="edit" onClick={() => handleEditIncident(incidents.id)} type="button">
+                        <button className="edit" onClick={() => handleEditIncident(incidents.id,incidents.title,incidents.descricao,incidents.valor)} type="button">
                             <FiEdit size={20} color="#a8a8b3" />
                         </button>
                     </li>

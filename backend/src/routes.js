@@ -37,8 +37,6 @@ routes.get('/incidents',celebrate({
     })
 }), IncidentsController.index);
 
-routes.get('/incidents/:id', IncidentsController.pesquisa);
-
 routes.put('/incidents/:id',IncidentsController.update);
 
 routes.post('/incidents', celebrate({

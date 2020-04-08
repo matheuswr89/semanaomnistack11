@@ -35,10 +35,10 @@ module.exports = {
 
         return response.json({ id });
     },
-    async update(req, res) {
-        const { title, descricao, valor } = req.body;
-        const { id } = req.params;
-        const ong_id = req.headers.authorization;
+    async update(request, response) {
+        const { title, descricao, valor } = request.body;
+        const { id } = request.params;
+        const ong_id = request.headers.authorization;
 
         const incident = await connection('incidents')
             .where('id', id)
@@ -46,7 +46,7 @@ module.exports = {
             .first();
 
         if (incident.ong_id !== ong_id) {
-            return res.status(401).json({ error: 'Operation not permitted.' });
+            return response.status(401).json({ error: 'Operation not permitted.' });
         }
 
         const update = await connection('incidents')
@@ -57,7 +57,7 @@ module.exports = {
                 valor
             });
 
-        return res.json(update);
+        return response.json(update);
     },
     async delete(request, response) {
         const { id } = request.params;
@@ -75,20 +75,5 @@ module.exports = {
         await connection('incidents').where('id', id).delete();
 
         return response.status(204).send();
-    },
-    async pesquisa(request, response) {
-        const { id } = request.params;
-        const ong_id = request.headers.authorization;
-
-        const incident = await connection('incidents')
-            .where('id', id)
-            .select('ong_id')
-            .first();
-
-        if (incident.ong_id != ong_id) {
-            return response.status(401).json({ error: 'Operation not permitted.' });
-        }
-        const caso = await connection('incidents').where('id', id).select('*');
-        return response.json(caso);
     }
 }
